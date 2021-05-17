@@ -1,24 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+import PrivateRoute from "./utils/PrivateRoute";
+import PublicRoute from "./utils/PublicRoute";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Router>
+        <Switch>
+          <PublicRoute exact path="/" component={CustomerLayout} />
+            <PublicRoute path="/admin/orgservice/:id" component= {OrganizationService}/>
+            <PublicRoute path="/admin/organizations" component={Organization} />
+        </Switch>
+      </Router>
   );
 }
 
