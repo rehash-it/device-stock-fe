@@ -35,27 +35,32 @@ const Device = () => {
       title: "lastCheckedOutDate",
       dataIndex: "lastCheckedOutDate",
       key: "lastCheckedOutDate",
-      render: (text) => <text>{text == null ? "No Checkout date" : text}</text>,
+      render: (text) => <text>{text == null ? "No Checkout date" : new Date(text).toLocaleString()}</text>,
     },
     {
       title: "lastCheckedOutBy",
       key: "lastCheckedOutBy",
       dataIndex: "lastCheckedOutBy",
-      render: (text) => <text>{text == null ? "Not Checked out" : text.name}</text>,
+      render: (text) => (
+        <text>{text == null ? "Not Checked out" : text.name}</text>
+      ),
     },
     {
       title: "Checkout status",
       dataIndex: "isCheckedOut",
       key: "isCheckedOut",
-      render: (text) => <text>{text == true ? "Checked out" : "Checked in"}</text>,
-
+      render: (text) => (
+        <text>{text == true ? "Checked out" : "Checked in"}</text>
+      ),
     },
     {
       title: "Action",
       key: "action",
       render: (text) => (
         <Space size="middle">
-          <Button >{text.isCheckedOut== true ? "Check in" : "Check out"}</Button>
+          <Button onClick={(e) => handleCheckout(e, text._id)}>
+            {text.isCheckedOut == true ? "Check in" : "Check out"}
+          </Button>
           <Popconfirm
             title="Are you sure to delete this organization?"
             onConfirm={() => confirmDelete(text._id)}
@@ -77,7 +82,27 @@ const Device = () => {
   const confirmDelete = (id) => {
     DeviceService.remove(id).then((response) => {});
     message.success("Successfully deleted device");
-    // setRedirect(<Redirect push exact to="/devices"/>);
+    getDevices();
+  };
+
+  const handleCheckout = (e, id) => {
+    var data = null;
+    if (e.target.innerHTML == "Check out") {
+      data = {
+        isCheckedOut: true,
+      };
+    } else {
+      data = {
+        isCheckedOut: false,
+      };
+    }
+    DeviceService.check(id, data).then((response) => {
+    }).finally((response)=>{
+      console.log(response);
+      message.error(response);
+
+    })
+    getDevices()
   };
 
   const cancelDelete = (e) => {
@@ -93,15 +118,11 @@ const Device = () => {
     history.push("/addnewdevice");
   };
 
-
   return (
     <div>
       <Button onClick={addNewDevice} type="primary">
         Add New
       </Button>
-    
-  
-
       <Table
         columns={columns}
         dataSource={data}

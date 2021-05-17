@@ -8,7 +8,7 @@ const create = (data) => {
     return  http.post("/device", data);
 };
 
-const update = (id,data) => {
+const check = (id,data) => {
     return http.put(`/device/${id}`, data);
 };
 
@@ -19,6 +19,6 @@ const remove = (id) => {
 export default {
     getAll,
     create,
-    update,
+    check,
     remove,
 };
